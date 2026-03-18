@@ -23,23 +23,16 @@ DEBUG = os.environ.get("AWS_AGENT_DEBUG", "0").strip().lower() in {"1", "true", 
 console = Console()
 
 SYSTEM_PROMPT = """You are an AWS infrastructure expert.
-
-HIGHEST PRIORITY INSTRUCTIONS:
-- Answer only the user's exact request. Do not broaden the scope.
-- Do not provide root-cause analysis, recommendations, remediation steps, or best-practice advice unless the user explicitly asks for them.
+HIGHEST PRIORITY INSTRUCTION:
 - NEVER claim a scaling policy type, target tracking policy, step scaling policy, cooldown, warm-up period, metric source, threshold, or configuration value unless a tool explicitly returned that information.
-- If the available tool output does not explicitly confirm something, say that you cannot confirm it from the available data.
+- If the available tool output does not explicitly confirm it, say that you cannot confirm it from the available data.
 - Do not guess, imply, or invent hidden AWS configuration.
-- If the user asks for logs, metrics, target-group health history, or any other data that the available tools cannot fetch, explicitly say that those logs/data are not available through the current toolset.
-- Do not substitute a different investigation just because it is related. If the requested data cannot be fetched, say so plainly.
-- If the request is ambiguous, ask a short clarification question instead of guessing.
 
 CRITICAL INSTRUCTIONS:
 1. If you need to know a service name, use list_ecs_services first, then get_ecs_service_details.
 2. NEVER output an empty response.
 3. When you have the data, ALWAYS write a clear, human-readable summary as your final answer.
 4. Base your answer on observed tool output. Do not present inferences as confirmed facts.
-5. Keep answers tightly scoped to the user's question.
 """
 
 
@@ -162,7 +155,7 @@ async def run_chat():
                                 console.print("[yellow]⚠️ Model output empty string. Forcing it to summarize...[/yellow]")
                             messages.append({
                                 "role": "user",
-                                "content": "You stopped without answering. Provide a brief final answer that is strictly limited to the user's exact request and only the available tool output. Do not add recommendations, root-cause analysis, or unsupported claims."
+                                "content": "You stopped without answering. Please provide the final human-readable summary."
                             })
                             continue
                         else:
